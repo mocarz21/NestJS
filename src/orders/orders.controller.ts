@@ -8,36 +8,38 @@ export class OrdersController {
         this.OrdersService = OrdersService
     }
     @Get('/')
-    getAll(): any{
+    async getAll() {
         return this.OrdersService.getAll()
     }
 
     @Get('/:id')
-    getById(@Param('id') id: string){
-        if(!this.OrdersService.getById(id))
+    async getById(@Param('id') id: string){
+        if(!(await this.OrdersService.getById(id)))
             throw new NotFoundException('order not found')
         return this.OrdersService.getById(id)
 
     }
     @Delete('/:id')
-    delete(@Param('id') id:string){
-        if(!this.OrdersService.getById(id))
+    async delete(@Param('id') id:string){
+        if(!(await this.OrdersService.getById(id)))
             throw new NotFoundException('order not found')
-        return this.OrdersService.deleteById(id)
+        
+        await this.OrdersService.deleteById(id)
+        return {success: true};
     }
     @Post('/')
     crete(@Body() orderData: CreteOrderDTO){
         return this.OrdersService.create(orderData)
     }
     @Put('/:id')
-    update(
+    async update(
         @Param('id')id: string,
         @Body() orderData: CreteOrderDTO
     )
     {
-        if(!this.OrdersService.getById(id))
+        if(!(await this.OrdersService.getById(id)))
             throw new NotFoundException('order not found')
-        this.OrdersService.updateById(id, orderData)
+        await this.OrdersService.updateById(id, orderData)
         return {success : true}
     }
 }
